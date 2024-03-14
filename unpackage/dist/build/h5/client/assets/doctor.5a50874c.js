@@ -1,0 +1,1 @@
+import{h as e}from"./http.dd4042ae.js";const a=a=>e.get("/patient/home/knowledge",{params:a}),t=(a=1,t=5)=>e.get("/home/page/doc",{params:{current:a,pageSize:t}}),o=(a,t="doc")=>e.post("/like",{id:a,type:t}),p=a=>e.post("/patient/order/evaluate",a);export{a,t as d,p as e,o as f};

@@ -1,0 +1,6 @@
+{
+  "name": "qq-openid",
+  "extensions": {
+    "uni-cloud-jql": {}
+  }
+}

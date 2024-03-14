@@ -1,0 +1,7 @@
+{
+  "navigationBarTitleText": "支付成功",
+  "backgroundColor": "#F8F8F8",
+  "usingComponents": {
+    "ad-interactive": "../../../../node-modules/@dcloudio/uni-components/lib/ad-interactive/ad-interactive"
+  }
+}

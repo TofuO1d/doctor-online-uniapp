@@ -1,0 +1,13 @@
+{
+  "hash": "c0d95988",
+  "browserHash": "b140de01",
+  "optimized": {
+    "luch-request": {
+      "src": "../../node_modules/luch-request/src/lib/luch-request.js",
+      "file": "luch-request.js",
+      "fileHash": "0626e610",
+      "needsInterop": false
+    }
+  },
+  "chunks": {}
+}

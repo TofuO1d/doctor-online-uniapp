@@ -1,89 +1,86 @@
 <script setup>
-  import { ref, computed } from 'vue'
+  import { ref, computed, reactive } from 'vue'
   import { doctorListApi, feedListApi } from '@/services/doctor'
-
-  // 导入列表组件
-  import feedList from './components/feed-list.vue'
-  // 导入医生组件
-  import doctorList from './components/doctor-list.vue'
-
   // 获取安全区域数据
   const { safeAreaInsets } = uni.getSystemInfoSync()
 
+  // 各类别知识列表组件
+  import feedList from './components/feed-list.vue'
+  // 医生列表组件
+  import doctorList from './components/doctor-list.vue'
+
   // 标签页索引值
   const tabIndex = ref(0)
-  // 标签页数据
-  const feedTabs = ref([
+
+  // 构造标签页相关数据
+  const feedTabs = reactive([
     {
       label: '推荐',
       type: 'recommend',
       current: 1,
-      hasMore: true,
       list: [],
+      hasMore: true,
       rendered: true,
     },
     {
       label: '关注',
       type: 'like',
       current: 1,
-      hasMore: true,
       list: [],
+      hasMore: true,
       rendered: false,
     },
     {
       label: '减脂',
       type: 'fatReduction',
       current: 1,
-      hasMore: true,
       list: [],
+      hasMore: true,
       rendered: false,
     },
     {
       label: '饮食',
       type: 'food',
       current: 1,
-      hasMore: true,
       list: [],
+      hasMore: true,
       rendered: false,
     },
   ])
 
+  // 标签页对应的类型 type
+  const feedType = computed(() => feedTabs[tabIndex.value].type)
+  // 标签页对应的页码 current
+  const feedCurrent = computed(() => feedTabs[tabIndex.value].current)
+  // 每次请求多少条数据
+  const feedPageSize = ref(5)
+
   // 医生列表
   const doctorItems = ref([])
 
-  // 类型数据
-  const feedType = computed(() => feedTabs.value[tabIndex.value].type)
-  // 页码数据
-  const feedCurrent = computed(() => feedTabs.value[tabIndex.value].current)
-  // 每页数据条数
-  const feedPageSize = ref(5)
-
   // 切换标签页
   function onFeedTabChange({ index }) {
+    // 标识当前选中的标签页
     tabIndex.value = index
-
-    // 只有组件未被加载时才去请求数据（保证只有1次）
-    if (!feedTabs.value[tabIndex.value].rendered) getFeedList()
-
-    // 标记组件是否为渲染过
-    feedTabs.value[tabIndex.value].rendered = true
+    // 获取标签页数据
+    if (!feedTabs[index].rendered) getFeedList()
+    // 每个标签页只被初始一次
+    feedTabs[index].rendered = true
   }
 
-  // 监听页面滚动
+  // 滚动加载更多数据
   function onScrollToLower() {
-    // 没有更多数据时就事必发请求了
-    if (feedTabs.value[tabIndex.value].hasMore) getFeedList()
+    if (feedTabs[tabIndex.value].hasMore) getFeedList()
   }
 
-  // 首页文章列表数据
+  // 获取知识列表
   async function getFeedList() {
-    // 调用接口
+    // 调用接口获取知识列表
     const { code, data, message } = await feedListApi({
       type: feedType.value,
       current: feedCurrent.value,
       pageSize: feedPageSize.value,
     })
-
     // 检测接口是否调用成功
     if (code !== 10000) return uni.utils.toast(message)
 
@@ -92,36 +89,32 @@
       row.content = row.content.replace(/<[^>]+>/g, '')
     })
 
+    // 列表中原来的数据
+    const list = feedTabs[tabIndex.value].list
+    // 追加方式渲染新请求来的数据
+    feedTabs[tabIndex.value].list = [...list, ...data.rows]
+
     // 列表数据的页码
-    const current = feedTabs.value[tabIndex.value].current
-
-    // 将调用接口获取的数据放到不同的 list 当中
-    // 根据索引值来区分放到哪个 list 中
-
-    // list 为上一次列表中的数据
-    // data.rows 为新请求来的数据
-    const list = feedTabs.value[tabIndex.value].list
-    feedTabs.value[tabIndex.value].list = [...list, ...data.rows]
-
-    // 让页码加1，保证下一页的请求
-    feedTabs.value[tabIndex.value].current++
+    const current = feedTabs[tabIndex.value].current
+    // 更新标签页码
+    feedTabs[tabIndex.value].current = current + 1
     // 判断是否有更多数据
-    feedTabs.value[tabIndex.value].hasMore = current + 1 <= data.pageTotal
+    feedTabs[tabIndex.value].hasMore = current + 1 <= data.pageTotal
   }
 
-  // 获取医生列表数据
+  // 获取推荐医生列表
   async function getDoctorList() {
-    // 调用接口
+    // 医生列表接口
     const { code, data, message } = await doctorListApi()
-    // 检测接口是否调用成功
+    //检测接口是否调用成功
     if (code !== 10000) return uni.utils.toast(message)
-    // 接收列表数据
+    // 渲染数据
     doctorItems.value = data.rows
   }
 
-  // 获取首页列表数据
+  // 渲染默认标签页数据
   getFeedList()
-  // 获取医生列表
+  // 医生列表
   getDoctorList()
 </script>
 
@@ -138,6 +131,7 @@
       >
         优医
       </view>
+
       <!-- 搜索栏 -->
       <view class="search-bar">
         <input
@@ -152,11 +146,7 @@
       </view>
       <!-- 快速入口 -->
       <view class="quick-entry">
-        <navigator
-          hover-class="none"
-          url="/subpkg_consult/quickly/index?type=1"
-          class="quick-entry-item"
-        >
+        <navigator hover-class="none" class="quick-entry-item">
           <image
             class="quick-entry-icon"
             src="/static/images/quick-entry-1.png"
@@ -176,11 +166,7 @@
           <text class="label">极速问诊</text>
           <text class="small">20s医生极速回复</text>
         </navigator>
-        <navigator
-          hover-class="none"
-          url="/subpkg_consult/quickly/index?type=3s"
-          class="quick-entry-item"
-        >
+        <navigator hover-class="none" class="quick-entry-item">
           <image
             class="quick-entry-icon"
             src="/static/images/quick-entry-3.png"
@@ -253,28 +239,25 @@
           </swiper-item>
         </swiper>
       </view>
-
-      <!-- 首页列表 -->
       <view
         class="doctor-feeds"
         :style="{ marginTop: -safeAreaInsets.top + 'px' }"
       >
-        <!-- 标签切换 + 吸顶交互 -->
         <custom-sticky :offset-top="safeAreaInsets.top + 'px'">
           <custom-tabs @click="onFeedTabChange" :list="feedTabs" />
         </custom-sticky>
+      </view>
 
-        <!-- 该组件一定要放到与吸顶组件平级 -->
-        <view
-          v-for="(feed, index) in feedTabs"
-          :key="feed.type"
-          v-show="tabIndex === index"
-        >
-          <!-- 医生列表 -->
-          <doctor-list :list="doctorItems" v-show="feedType === 'recommend'" />
-          <!-- 医生文章列表 -->
-          <feed-list :list="feed.list" v-if="feed.rendered" />
-        </view>
+      <!-- 医生列表 -->
+      <doctor-list :list="doctorItems" v-show="feedType === 'recommend'" />
+
+      <!-- 关注知识列表 -->
+      <view
+        v-for="(feed, index) in feedTabs"
+        :key="feed.type"
+        v-show="tabIndex === index"
+      >
+        <feed-list :list="feed.list" v-if="feed.rendered" />
       </view>
     </view>
   </scroll-page>

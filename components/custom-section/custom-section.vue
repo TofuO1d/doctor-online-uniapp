@@ -1,5 +1,4 @@
 <script setup>
-  // 接收组件外部传入的数据
   const sectionProps = defineProps({
     title: {
       type: String,
@@ -27,7 +26,7 @@
           color="#c3c3c5"
           size="16"
           type="forward"
-        />
+        ></uni-icons>
       </view>
     </view>
     <slot />

@@ -1,22 +1,17 @@
 <script setup>
   import { ref } from 'vue'
-  import { onLoad } from '@dcloudio/uni-app'
-  import {
-    addPatientApi,
-    patientDetailApi,
-    updatePatientApi,
-  } from '@/services/patient'
+  import { addPatientApi, patientDetailApi, updatePatientApi } from '@/services/patient'
+
+  // 表单组件 ref
+  const formRef = ref()
 
   // 表单数据
   const formData = ref({
-    name: '',
-    idCard: '',
+    name: '张三',
+    idCard: '110101198702171378',
     gender: 1,
     defaultFlag: 0,
   })
-
-  // 表单组件
-  const formRef = ref()
 
   // 表单验证规则
   const formRules = {
@@ -41,14 +36,14 @@
     },
     gender: {
       rules: [
-        { required: true, errorMessage: '请勾选患者性别' },
+        { required: true, errorMessage: '请勾选患者姓名' },
         {
           validateFunction(rule, value, data, callback) {
-            123456
-            // 检测身份证号第17位是否为偶数
+            // console.log(data.idCard.slice(16, 17) % 2)
             if (data.idCard.slice(16, 17) % 2 !== value) {
               callback('选择的性别与身份号中性别不一致')
             }
+
             return true
           },
         },
@@ -56,80 +51,97 @@
     },
   }
 
-  // 1. 生命周期中获取地址参数
-  // onLoad((query) => {
-  //   console.log(query)
-  // })
+  // 使用 defineProps 接收地址参数
+  const props = defineProps({ id: String })
 
-  // 2. 地址参数也可以在页面中定义 defineProps
-  const props = defineProps({
-    // 地址参数名： 类型
-    id: String,
-  })
+  // 提交表单数据
+  async function onFormSubmit() {
+    try {
+      // 根据验证规则验证数据
+      const formData = await formRef.value.validate()
 
-  console.log(props.id)
+      // #ifdef APP
+      // 实人认证
+      // 1. 获取设备信息
+      const metaInfo = uni.getFacialRecognitionMetaInfo()
+      // 2. 调用云函数
+      uniCloud.callFunction({
+        name: 'uni-verify',
+        data: {
+          metaInfo,
+          realName: formData.name,
+          idCard: formData.idCard,
+        },
+        success({ result }) {
+          // 3. 客户端调起sdk刷脸认证
+          uni.startFacialRecognitionVerify({
+            certifyId: result.certifyId,
+            success() {
+              // 添加患者或更新患者
+              props.id ? updatePatient() : addPatient()
+            },
+            fail() {
+              uni.utils.toast('实人认证失败!')
+            },
+          })
+        },
+      })
+      // #endif
 
-  // 监听switch切换
+      // #ifndef APP
+      // 添加患者或更新患者
+      props.id ? updatePatient() : addPatient()
+      // #endif
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  // 是否为默认就诊人
   function onSwitchChange(ev) {
     // 是否设置为默认就诊患人
     formData.value.defaultFlag = ev.detail.value ? 1 : 0
   }
 
-  // 提交表单数据
-  async function onFormSubmit() {
-    try {
-      // 表单验证
-      await formRef.value.validate()
-
-      // 区分到底是添加还是修改
-      props.id ? updatePatient() : addPatient()
-    } catch (e) {
-      //TODO handle the exception
-    }
-  }
-
-  // 修改患者
-  async function updatePatient() {
-    // 调用接口
-    const { code, message } = await updatePatientApi(formData.value)
-    // 检测接口是否调用成功
-    if (code !== 10000) return uni.utils.toast(message)
-    // 返加上一页（患者列表）
-    uni.navigateBack()
-  }
-
-  // 添加患者
+  // 添加患者信息
   async function addPatient() {
-    // 调用接口
+    // 添加患者接口
     const { code, message } = await addPatientApi(formData.value)
     // 检测接口是否调用成功
     if (code !== 10000) return uni.utils.toast(message)
-    // 返加上一页（患者列表）
+
+    // 跳转到患者列表页面
     uni.navigateBack()
   }
 
-  // 获取患者的信息（详情）
+  // 编辑（更新）患者信息
+  async function updatePatient() {
+    // 更新患者信息接口
+    const { code, message } = await updatePatientApi(formData.value)
+    // 检测接口是否调用成功
+    if (code !== 10000) return uni.utils.toast(message)
+    // 跳转到患者列表页面
+    uni.navigateBack()
+  }
+
+  // 获取患者详情信息
   async function getPatientDetail() {
-    // 根据ID区分当前页面是添加患者
-    // 还是修改患者
+    // 是否存在患者 ID
     if (!props.id) return
-    // 动态修改导航栏标题文字
+    // 有ID说明当前处于编辑状态，修改页面标题
     uni.setNavigationBarTitle({ title: '编辑患者' })
 
-    // 调用接口
+    // 患者详情接口
     const {
       code,
       data: { genderValue, age, ...rest },
-      message,
     } = await patientDetailApi(props.id)
 
-    // 检测接口是否调用成功
-    if (code !== 10000) return uni.utils.toast(message)
-
-    // 回显患者信息
+    // 渲染患者信息
     formData.value = rest
   }
 
+  // 查询患者信息
   getPatientDetail()
 </script>
 
@@ -138,10 +150,10 @@
     <view class="archive-page">
       <uni-forms
         border
+        label-width="220rpx"
         :model="formData"
         :rules="formRules"
         ref="formRef"
-        label-width="220rpx"
       >
         <uni-forms-item label="患者姓名" name="name">
           <uni-easyinput
@@ -165,8 +177,8 @@
         </uni-forms-item>
         <uni-forms-item label="患者性别" name="gender">
           <uni-data-checkbox
-            selectedColor="#16C2A3"
             v-model="formData.gender"
+            selectedColor="#16C2A3"
             :localdata="[
               { text: '男', value: 1 },
               { text: '女', value: 0 },

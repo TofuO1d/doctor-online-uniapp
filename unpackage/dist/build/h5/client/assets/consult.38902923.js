@@ -1,0 +1,1 @@
+import{h as t}from"./http.dd4042ae.js";const a=()=>t.get("/dep/all"),e=(a,e={})=>t.get("/patient/consult/order/pre",{params:{type:a,...e}}),r=a=>t.post("/patient/consult/order",a),s=a=>t.get("/patient/consult/order/detail",{params:{orderId:a}}),o=a=>t.get("/patient/consult/order/list",{params:a});export{o as a,r as c,a as d,s as o,e as p};

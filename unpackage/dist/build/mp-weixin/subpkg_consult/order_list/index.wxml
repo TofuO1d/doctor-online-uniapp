@@ -1,0 +1,1 @@
+<view class="consult-page"><view class="consult-status-tabs"><custom-tabs wx:if="{{b}}" bindclick="{{a}}" u-i="52ff2100-0" bind:__l="__l" u-p="{{b}}"></custom-tabs></view><view wx:for="{{c}}" wx:for-item="order" wx:key="d" hidden="{{!order.e}}"><order-list wx:if="{{order.a}}" u-i="{{order.b}}" bind:__l="__l" u-p="{{order.c}}"/></view></view>

@@ -1,0 +1,1 @@
+import{C as s,q as e}from"./index-0333b418.js";const l=s("consult",(()=>{const s=e({illnessDesc:"",illnessTime:"",consultFlag:"",pictures:[]});return{illnessInfo:e({...s.value}),initalValue:s,type:e(""),illnessType:e(""),depId:e(""),patientId:e("")}}),{persist:{paths:["illnessInfo","type","illnessType","depId","patientId"]}});export{l as u};

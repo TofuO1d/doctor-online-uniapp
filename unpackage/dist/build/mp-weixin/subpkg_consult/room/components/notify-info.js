@@ -1,0 +1,1 @@
+"use strict";const e=require("../../../common/vendor.js"),t={__name:"notify-info",props:{type:{type:Number,default:31}},setup(t){const n=t;return(t,o)=>e.e({a:32===n.type},(n.type,{}))}};wx.createComponent(t);

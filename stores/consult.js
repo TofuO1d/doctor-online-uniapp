@@ -4,9 +4,7 @@ import { defineStore } from 'pinia'
 export const useConsultStore = defineStore(
   'consult',
   () => {
-    // 定义数据
-
-    // 1. 患者病情初始数据
+    // 患者病情初始数据
     const initalValue = ref({
       illnessDesc: '',
       illnessTime: '',
@@ -14,14 +12,15 @@ export const useConsultStore = defineStore(
       pictures: [],
     })
 
-    // 2. 存储患者病情数据
+    // 患者病情数据
     const illnessInfo = ref({ ...initalValue.value })
 
-    // 定义地址相关参数据
+    // 极速问诊
     const type = ref('')
+    // 问诊类型
     const illnessType = ref('')
+    // 科室ID
     const depId = ref('')
-
     // 患者ID
     const patientId = ref('')
 

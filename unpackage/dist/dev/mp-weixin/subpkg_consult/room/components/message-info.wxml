@@ -1,0 +1,1 @@
+<view class="{{[g && 'reverse', 'message-item']}}"><image class="room-avatar" src="{{a}}"/><view class="room-message"><view class="time">{{b}}</view><view wx:if="{{c}}" class="text">{{d}}</view><image wx:if="{{e}}" class="image" src="{{f}}" mode="widthFix"/></view></view>

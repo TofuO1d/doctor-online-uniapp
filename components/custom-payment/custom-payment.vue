@@ -1,23 +1,11 @@
 <script setup>
   import { ref } from 'vue'
 
-  // 弹层组件实例
+  // 在线支付弹层
   const paymentPopup = ref()
 
-  // 自定义两个属性接收外部传处的数据
-  const paymentProps = defineProps({
-    orderId: String,
-    amount: {
-      type: [Number, String],
-      default: 0,
-    },
-  })
-
-  // 组件自定义事件，目的是将组件内的执行结果传给组件外部
-  const paymentEmits = defineEmits(['change', 'close', 'confirm'])
-
-  // 选中支付方法的索引值
-  const channelIndex = ref(1)
+  // 支付渠道的索引
+  const channelIndex = ref(0)
 
   // 支付渠道（方式）
   const paymentChannel = [
@@ -31,63 +19,67 @@
     },
   ]
 
-  function open() {
-    // 打开弹层
-    paymentPopup.value.open()
-  }
+  // 接收组件外部传入的数据
+  const paymentProps = defineProps({
+    // 待支付订单ID
+    orderId: String,
+    // 待支付金额
+    amount: {
+      type: [String, Number],
+      default: 0,
+    },
+  })
 
-  function close() {
-    // 关闭弹层
-    paymentPopup.value.close()
-  }
+  // 自定义事件
+  const paymentEmits = defineEmits(['confirm', 'change', 'close'])
 
-  // 切换支付方式
+  // 切换支付渠道
   function onChannelChange(index) {
+    // 当前选中渠道索引
     channelIndex.value = index
-    // 触发自定义事件 change
+    // 触发 change 事件
     paymentEmits('change', { index })
   }
 
-  // 一个组件可以向外开放一些方法，供组件外部调用
-  // 使用 defineExpose 语法实现
-  // defineExpose({
-  //   '外部调用的方法名': '组件内部真实的函数(方法)'
-  // })
+  // 打开弹层
+  function open() {
+    paymentPopup.value.open()
+  }
 
-  // 向组件外部暴露两个方法
+  // 关闭弹层
+  function close() {
+    paymentPopup.value.close()
+  }
+
   defineExpose({ open, close })
-
-  // function showPopup() {
-  //   paymentPopup.value.open()
-  // }
-
-  // function onMaskClick() {
-  //   console.log('蒙层被点击了')
-  // }
 </script>
-
 <template>
-  <uni-popup ref="paymentPopup" :is-mask-click="false" type="bottom">
+  <uni-popup
+    @maskClick="$emit('close')"
+    :is-mask-click="false"
+    ref="paymentPopup"
+    type="bottom"
+  >
     <view class="payment-container">
       <view class="payment-header">
         <text class="title">选择支付方式</text>
         <uni-icons
-          @click="$emit('close')"
           class="uni-icons-close"
           size="18"
           color="#333"
           type="closeempty"
+          @click="$emit('close')"
         />
       </view>
-      <view class="order-amount">¥ {{ paymentProps.amount }}元</view>
+      <view class="order-amount">¥ {{ paymentProps.amount }}</view>
       <uni-list :border="false">
         <uni-list-item
           v-for="(channel, index) in paymentChannel"
-          @click="onChannelChange(index)"
-          clickable
           :key="channel.title"
           :title="channel.title"
           :thumb="channel.thumb"
+          clickable
+          @click="onChannelChange(index)"
         >
           <template #footer>
             <uni-icons
@@ -100,13 +92,14 @@
           </template>
         </uni-list-item>
       </uni-list>
-      <button @click="$emit('confirm', { index: channelIndex })" class="uni-button">
+      <button
+        @click="$emit('confirm', { index: channelIndex })"
+        class="uni-button"
+      >
         立即支付
       </button>
     </view>
   </uni-popup>
-
-  <!-- <button @click="showPopup" type="primary">显示弹层</button> -->
 </template>
 
 <script>

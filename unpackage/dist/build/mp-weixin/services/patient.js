@@ -1,0 +1,1 @@
+"use strict";const t=require("../utils/http.js");exports.addPatientApi=e=>t.http.post("/patient/add",e),exports.patientDetailApi=e=>t.http.get(`/patient/info/${e}`),exports.patientListApi=e=>t.http.get("/patient/mylist"),exports.removePatientApi=e=>t.http.delete(`/patient/del/${e}`),exports.updatePatientApi=e=>t.http.put("/patient/update",e);

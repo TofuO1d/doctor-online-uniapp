@@ -3,45 +3,43 @@
   import { userInfoApi } from '@/services/user'
   import { useUserStore } from '@/stores/user'
 
-  // 与用户相关的数据
+  // 用户相关的数据
   const userStore = useUserStore()
 
-  // 用户信息数据
+  // 用户信息
   const userInfo = ref({})
 
   // 退出登录
   function onLogoutClick() {
-    // 清空 token
+    // 清除登录状态
     userStore.token = ''
-    // 重置跳转页面与跳转方式
+    // 重置 Pinia 的数据
     userStore.openType = 'switchTab'
-    userStore.recirectURL = '/pages/index/index'
-
-    // 跳转到登录（因为只有登录页不需要 token）
-    uni.reLaunch({
-      url: '/pages/login/index',
-    })
+    userStore.redirectURL = '/pages/index/index'
+    // 跳转到登录页
+    uni.reLaunch({ url: '/pages/login/index' })
   }
 
   // 获取用户信息
   async function getUserInfo() {
-    // 调用接口
+    // 调用接口获取用户信息
     const { code, data, message } = await userInfoApi()
-    // 检测是否成功
+    // 检测接口是否调用成功
     if (code !== 10000) return uni.utils.toast(message)
-    // 渲染数据
+    // 渲染用户数据
     userInfo.value = data
   }
 
-  // 获取数据
+  // 获取个人信息
   getUserInfo()
 </script>
+
 <template>
   <scroll-page background-color="#F6F7F9">
     <view class="my-page">
       <!-- 用户资料（头像&昵称） -->
       <view class="user-profile">
-        <image class="user-avatar" :src="userInfo.avatar" />
+        <image class="user-avatar" :src="userInfo.avatar"></image>
         <view class="user-info">
           <text class="nickname">{{ userInfo.account }}</text>
           <text class="iconfont icon-edit"></text>
@@ -118,12 +116,13 @@
           </swiper-item>
         </swiper>
       </custom-section>
+
       <!-- 药品订单 -->
       <custom-section show-arrow title="药品订单">
         <template #right>
-          <navigator hover-class="none" url="/subpkg_medicine/order_list/index">
-            全部订单
-          </navigator>
+          <navigator hover-class="none" url="/subpkg_medicine/order_list/index"
+            >全部订单</navigator
+          >
         </template>
         <view class="drug-order">
           <navigator hover-class="none" url="/subpkg_medicine/order_list/index">
@@ -164,6 +163,7 @@
           </navigator>
         </view>
       </custom-section>
+
       <!-- 快捷工具 -->
       <custom-section title="快捷工具">
         <uni-list :border="false">
@@ -241,6 +241,7 @@
           />
         </uni-list>
       </custom-section>
+
       <!-- 退出登录 -->
       <view @click="onLogoutClick" class="logout-button">退出登录</view>
     </view>

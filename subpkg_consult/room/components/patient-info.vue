@@ -1,5 +1,5 @@
 <script setup>
-  // 接收组件外部的数据
+  // 定义属性接收外部传入的数据
   const props = defineProps({
     info: {
       type: Object,
@@ -14,19 +14,21 @@
     3: '半年内',
     4: '半年以上',
   }
+
   // 是否就诊过
   const consultFlags = {
     1: '就诊过',
     0: '没有就诊过',
   }
 
-  // 以大图方式查看
-  function onPreviewClick(urls) {
+  // 点击查看病情介绍图片
+  async function onPreviewClick(urls) {
     uni.previewImage({
-      urls: urls.map(({ url }) => url),
+      urls: urls.map((item) => item.url),
     })
   }
 </script>
+
 <template>
   <!-- 患者信息（21） -->
   <view class="patient-info">
@@ -39,7 +41,7 @@
       <view class="note">
         {{ illnessTimes[props.info.illnessTime] }}
         |
-        {{ consultFlags[props.info.consultFlag] }}
+        {{ consultFlags[props.info.illnessType] }}
       </view>
     </view>
     <view class="content">
@@ -50,11 +52,12 @@
       <view class="list-item">
         <text class="label">图片</text>
         <text
+          v-if="props.info.pictures?.length"
           @click="onPreviewClick(props.info.pictures)"
-          v-if="props.info.pictures.length > 0"
           class="note"
-          >点击查看</text
         >
+          点击查看
+        </text>
         <text v-else class="note">暂无图片</text>
       </view>
     </view>

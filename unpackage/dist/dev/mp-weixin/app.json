@@ -1,0 +1,87 @@
+{
+  "pages": [
+    "pages/index/index",
+    "pages/my/index",
+    "pages/notify/index",
+    "pages/wiki/index",
+    "pages/test/index",
+    "pages/login/index"
+  ],
+  "subPackages": [
+    {
+      "root": "subpkg_archive",
+      "pages": [
+        "form/index",
+        "list/index"
+      ]
+    },
+    {
+      "root": "subpkg_consult",
+      "pages": [
+        "quickly/index",
+        "department/index",
+        "description/index",
+        "patient/index",
+        "payment/index",
+        "room/index",
+        "order_list/index",
+        "order_detail/index"
+      ]
+    },
+    {
+      "root": "uni_modules/uni-pay/pages",
+      "pages": [
+        "success/success",
+        "ad-interactive-webview/ad-interactive-webview"
+      ]
+    },
+    {
+      "root": "subpkg_medicine",
+      "pages": [
+        "payment/index",
+        "pay_result/index",
+        "order_detail/index",
+        "order_list/index",
+        "timeline/index"
+      ]
+    }
+  ],
+  "window": {
+    "navigationBarTextStyle": "black",
+    "navigationBarTitleText": "优医咨询",
+    "navigationBarBackgroundColor": "#fff",
+    "backgroundColor": "#F8F8F8"
+  },
+  "tabBar": {
+    "color": "#6F6F6F",
+    "selectedColor": "#6F6F6F",
+    "borderStyle": "white",
+    "list": [
+      {
+        "text": "首页",
+        "pagePath": "pages/index/index",
+        "iconPath": "static/tabbar/home-default.png",
+        "selectedIconPath": "static/tabbar/home-active.png"
+      },
+      {
+        "text": "健康百科",
+        "pagePath": "pages/wiki/index",
+        "iconPath": "static/tabbar/wiki-default.png",
+        "selectedIconPath": "static/tabbar/wiki-active.png"
+      },
+      {
+        "text": "消息通知",
+        "pagePath": "pages/notify/index",
+        "iconPath": "static/tabbar/notify-default.png",
+        "selectedIconPath": "static/tabbar/notify-active.png"
+      },
+      {
+        "text": "我的",
+        "pagePath": "pages/my/index",
+        "iconPath": "static/tabbar/my-default.png",
+        "selectedIconPath": "static/tabbar/my-active.png"
+      }
+    ]
+  },
+  "usingComponents": {}
+}

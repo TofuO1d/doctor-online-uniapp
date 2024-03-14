@@ -1,49 +1,58 @@
 {
-  "pages": [ //pages数组中第一项表示应用启动页，参考：https://uniapp.dcloud.io/collocation/pages
-    {
-      "path": "pages/index/index",
-      "style": {
-        "navigationBarTitleText": "优医咨询",
-        "navigationStyle": "custom"
-      }
-    }, {
-      "path": "pages/my/index",
-      "style": {
-        "navigationBarTitleText": "我的",
-        "enablePullDownRefresh": false,
-        "navigationStyle": "custom"
-      }
-
-    }, {
-      "path": "pages/notify/index",
-      "style": {
-        "navigationBarTitleText": "消息通知",
-        "enablePullDownRefresh": false
-      }
-
-    }, {
-      "path": "pages/wiki/index",
-      "style": {
-        "navigationBarTitleText": "健康百科",
-        "enablePullDownRefresh": false
-      }
-
-    }, {
-      "path": "pages/test/index",
-      "style": {
-        "navigationBarTitleText": "测试页面",
-        "enablePullDownRefresh": false
-      }
-
-    }, {
-      "path": "pages/login/index",
-      "style": {
-        "navigationBarTitleText": "用户登录",
-        "enablePullDownRefresh": false
-      }
-
+  "pages": [{
+    "path": "pages/index/index",
+    "style": {
+      "navigationBarTitleText": "优医咨询",
+      "navigationStyle": "custom"
     }
-  ],
+  }, {
+    "path": "pages/my/index",
+    "style": {
+      "navigationBarTitleText": "我的",
+      "enablePullDownRefresh": false,
+      "navigationStyle": "custom"
+    }
+
+  }, {
+    "path": "pages/notify/index",
+    "style": {
+      "navigationBarTitleText": "消息通知",
+      "enablePullDownRefresh": false
+    }
+
+  }, {
+    "path": "pages/wiki/index",
+    "style": {
+      "navigationBarTitleText": "健康百科",
+      "enablePullDownRefresh": false
+    }
+
+  }, {
+    "path": "pages/test/index",
+    "style": {
+      "navigationBarTitleText": "测试页",
+      "enablePullDownRefresh": false
+    }
+
+  }, {
+    "path": "pages/login/index",
+    "style": {
+      "navigationBarTitleText": "用户登录",
+      "enablePullDownRefresh": false
+    }
+  }, {
+    "path": "pages/login/qq",
+    "style": {
+      "navigationBarTitleText": "QQ登录",
+      "enablePullDownRefresh": false
+    }
+  }],
+  "globalStyle": {
+    "navigationBarTextStyle": "black",
+    "navigationBarTitleText": "优医咨询",
+    "navigationBarBackgroundColor": "#fff",
+    "backgroundColor": "#F8F8F8"
+  },
   "tabBar": {
     "color": "#6F6F6F",
     "selectedColor": "#6F6F6F",
@@ -74,13 +83,91 @@
       }
     ]
   },
-  "globalStyle": {
-    "navigationBarTextStyle": "black",
-    "navigationBarTitleText": "uni-app",
-    "navigationBarBackgroundColor": "#F8F8F8",
-    "backgroundColor": "#F8F8F8"
-  },
   "subPackages": [{
+      "root": "subpkg_archive",
+      "pages": [{
+        "path": "form/index",
+        "style": {
+          "navigationBarTitleText": "添加患者"
+        }
+      }, {
+        "path": "list/index",
+        "style": {
+          "navigationBarTitleText": "患者列表"
+        }
+      }]
+    },
+    {
+      "root": "subpkg_consult",
+      "pages": [{
+          "path": "quickly/index",
+          "style": {
+            "navigationBarTitleText": "极速问诊"
+          }
+        },
+        {
+          "path": "department/index",
+          "style": {
+            "navigationBarTitleText": "选择科室"
+          }
+        },
+        {
+          "path": "description/index",
+          "style": {
+            "navigationBarTitleText": "图文问诊"
+          }
+        },
+        {
+          "path": "patient/index",
+          "style": {
+            "navigationBarTitleText": "选择患者"
+          }
+        },
+        {
+          "path": "payment/index",
+          "style": {
+            "navigationBarTitleText": "等待付款"
+          }
+        },
+        {
+          "path": "room/index",
+          "style": {
+            "navigationBarTitleText": "问诊室"
+          }
+        },
+        {
+          "path": "order_list/index",
+          "style": {
+            "navigationBarTitleText": "订单列表"
+          }
+        },
+        {
+          "path": "order_detail/index",
+          "style": {
+            "navigationBarTitleText": "订单详情"
+          }
+        }
+      ]
+    },
+    {
+      "root": "uni_modules/uni-pay/pages",
+      "pages": [{
+          "path": "success/success",
+          "style": {
+            "navigationBarTitleText": "支付成功",
+            "backgroundColor": "#F8F8F8"
+          }
+        },
+        {
+          "path": "ad-interactive-webview/ad-interactive-webview",
+          "style": {
+            "navigationBarTitleText": "ad",
+            "backgroundColor": "#F8F8F8"
+          }
+        }
+      ]
+    },
+    {
       "root": "subpkg_medicine",
       "pages": [{
           "path": "payment/index",
@@ -111,70 +198,6 @@
           "style": {
             "navigationBarTitleText": "查看物流",
             "navigationStyle": "custom"
-          }
-        }
-      ]
-    }, {
-      "root": "subpkg_consult",
-      "pages": [{
-          "path": "order_list/index",
-          "style": {
-            "navigationBarTitleText": "订单列表"
-          }
-        },
-        {
-          "path": "order_detail/index",
-          "style": {
-            "navigationBarTitleText": "订单详情"
-          }
-        }, {
-          "path": "room/index",
-          "style": {
-            "navigationBarTitleText": "问诊室"
-          }
-        }, {
-          "path": "payment/index",
-          "style": {
-            "navigationBarTitleText": "等待付款"
-          }
-        }, {
-          "path": "quickly/index",
-          "style": {
-            "navigationBarTitleText": "极速问诊"
-          }
-        },
-        {
-          "path": "department/index",
-          "style": {
-            "navigationBarTitleText": "选择科室"
-          }
-        },
-        {
-          "path": "description/index",
-          "style": {
-            "navigationBarTitleText": "图文问诊"
-          }
-        },
-        {
-          "path": "patient/index",
-          "style": {
-            "navigationBarTitleText": "选择患者"
-          }
-        }
-      ]
-    },
-    {
-      "root": "subpkg_archive",
-      "pages": [{
-          "path": "form/index",
-          "style": {
-            "navigationBarTitleText": "添加患者"
-          }
-        },
-        {
-          "path": "list/index",
-          "style": {
-            "navigationBarTitleText": "患者列表"
           }
         }
       ]

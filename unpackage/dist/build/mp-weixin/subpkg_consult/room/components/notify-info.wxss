@@ -1,0 +1,1 @@
+.message-tips{display:flex;justify-content:center;margin-top:60rpx}.message-tips:first-child{margin-top:30rpx}.wrapper{line-height:1;text-align:center;padding:20rpx 30rpx;font-size:24rpx;border-radius:70rpx;color:#848484;background-color:#fff}.wrapper .label{color:#16c2a3}

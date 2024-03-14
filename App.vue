@@ -13,9 +13,9 @@
 </script>
 
 <style lang="scss">
-  // 导入字体样式
+  // 单色图标
   @import '@/static/fonts/iconfont.scss';
-  // 多色图标(与正常图的使用方式一样)
+  // 多色图标
   @import './color-fonts.scss';
 
   image {
@@ -40,5 +40,12 @@
       color: #fff !important;
       background-color: #ace8e0 !important;
     }
+  }
+
+  .empty-tips {
+    margin-top: 40rpx;
+    text-align: center;
+    font-size: 28rpx;
+    color: #c3c3c5;
   }
 </style>

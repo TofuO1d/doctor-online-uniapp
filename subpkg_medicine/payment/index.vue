@@ -1,88 +1,80 @@
 <script setup>
   import { ref } from 'vue'
-  import { addressListApi } from '@/services/address'
   import { createOrderApi, preOrderApi } from '@/services/medicine'
-  import { orderPayApi } from '@/services/payment'
-
-  // 支付组件引用
-  const paymentRef = ref()
+  import { addressListApi } from '@/services/address'
+  import { paymentApi } from '@/services/payment'
 
   // 获取地址中的参数
   const props = defineProps({
     id: String,
   })
 
-  // 地址列表
-  const addressInfo = ref([])
   // 预付订单信息
   const preOrderInfo = ref({})
-  // 订单ID
+  // 收货地址信息
+  const addressInfo = ref({})
+  // 待支付订单ID
   const orderId = ref('')
+  // 支付渠道组件实例
+  const paymentRef = ref()
 
-  // 关闭支付组件
-  function onPaymentClose() {
-    // 可以自行组用户一个确认框
-    // uni.showModal({})
-    paymentRef.value.close()
-  }
+  // 关闭支付渠道弹层
+  function onPaymentClose() {}
 
-  // 确认支付
+  // 支付渠道确认支付
   async function onPaymentConfirm({ index }) {
-    if (index === 0) return uni.utils.toast('暂不支付微信支付!')
-    // 调用后端接口进行支付
-    const { code, data, message } = await orderPayApi({
-      paymentMethod: index,
+    if (index === 0) return uni.utils.toast('暂不支持微信支付!')
+    // 调用后端提供的支付接口
+    const { code, data, message } = await paymentApi({
       orderId: orderId.value,
-      payCallback: 'http://localhost:5173/#/subpkg_medicine/pay_result/index',
+      paymentMethod: index,
+      payCallback: 'http://localhost/subpkg_medicine/pay_result/index',
     })
-    // 检测接口是否调用成功
+
+    // 接口是否调用成功
     if (code !== 10000) return uni.utils.toast(message)
 
-    // #ifdef H5
+    // 支付宝支付页面
     window.location.href = data.payUrl
-    // #endif
   }
 
-  // 生成待付款订单
+  // 选择支付渠道
   async function onPaymentButtonClick() {
-    // 调用接口
-    const { code, data, message } = await createOrderApi(
-      props.id,
-      addressInfo.value.id
-    )
+    // 生成订单接口
+    const { code, data, message } = await createOrderApi(props.id, addressInfo.value.id)
     // 检测接口是否调用成功
     if (code !== 10000) return uni.utils.toast(message)
-
-    // 接收待付款订单ID
+    // 传递订单ID
     orderId.value = data.id
-    // 展示支付渠道
+    // 打开支付渠道
     paymentRef.value.open()
   }
 
-  // 获取地址列表
+  // 用户收货地址
   async function getAddressList() {
-    // 调用接口
+    // 地址列表接口
     const { code, data, message } = await addressListApi()
     // 检测接口是否调用成功
     if (code !== 10000) return uni.utils.toast(message)
-    // 接收返回的地址列表
+    // 渲染地址列表数据
     addressInfo.value = data[0]
   }
 
-  // 生成预付订单
+  // 药品预付订单
   async function createPreOrder() {
-    // 调用接口
+    if (!props.id) return
+    // 预付订单接口
     const { code, data, message } = await preOrderApi(props.id)
     // 检测接口是否调用成功
     if (code !== 10000) return uni.utils.toast(message)
-    // 接收返回的数据
+    // 渲染预付订单信息
     preOrderInfo.value = data
   }
 
-  // 预付订单信息
-  createPreOrder()
-  // 药品收货地址
+  // 获取收货地址列表
   getAddressList()
+  // 生成预付订单
+  createPreOrder()
 </script>
 
 <template>
@@ -107,36 +99,15 @@
       </view>
       <!-- 药品列表 -->
       <view class="medicine-list">
-        <view class="medicine-list-item">
-          <image
-            class="medicine-cover"
-            src="/static/uploads/medicine-1.jpg"
-            mode="aspectFill"
-          />
-          <view class="medicine-info">
-            <text class="name">瑞巴派特片</text>
-            <text class="unit symbol">24片</text>
-            <text class="price">¥25.00</text>
-          </view>
-          <view class="quantity">x1</view>
-          <view class="guide">用法用量：口服，每次1袋，每天3次，用药3天</view>
-        </view>
         <view
           v-for="medicine in preOrderInfo.medicines"
           :key="medicine.id"
           class="medicine-list-item"
         >
-          <image
-            class="medicine-cover"
-            :src="medicine.avatar"
-            mode="aspectFill"
-          />
+          <image class="medicine-cover" :src="medicine.avatar" mode="aspectFill" />
           <view class="medicine-info">
             <text class="name">{{ medicine.name }}</text>
-            <text
-              :class="{ symbol: medicine.prescriptionFlag === 1 }"
-              class="unit"
-            >
+            <text :class="{ symbol: medicine.prescriptionFlag === 1 }" class="symbol">
               {{ medicine.specs }}
             </text>
             <text class="price">¥{{ medicine.amount }}</text>
@@ -149,23 +120,14 @@
       <!-- 订单信息 -->
       <view class="order-info">
         <uni-list :border="false">
-          <uni-list-item
-            title="药品金额"
-            :right-text="'¥' + preOrderInfo.payment"
-          />
-          <uni-list-item
-            title="运费"
-            :right-text="'¥' + preOrderInfo.expressFee"
-          />
+          <uni-list-item title="药品金额" :right-text="'¥' + preOrderInfo.payment" />
+          <uni-list-item title="运费" :right-text="'¥' + preOrderInfo.expressFee" />
           <uni-list-item
             title="优惠券"
             show-arrow
             :right-text="'-¥' + preOrderInfo.couponDeduction"
           />
-          <uni-list-item
-            title="实付款"
-            :right-text="'¥' + preOrderInfo.actualPayment"
-          />
+          <uni-list-item title="实付款" :right-text="'¥' + preOrderInfo.actualPayment" />
         </uni-list>
       </view>
 
@@ -175,21 +137,19 @@
           需付款: <text class="number">¥{{ preOrderInfo.actualPayment }}</text>
         </view>
         <view class="buttons">
-          <button @click="onPaymentButtonClick" class="uni-button">
-            立即支付
-          </button>
+          <button @click="onPaymentButtonClick" class="uni-button">立即支付</button>
         </view>
       </view>
     </view>
   </scroll-page>
 
-  <!-- 支付组件 -->
+  <!-- 支付渠道 -->
   <custom-payment
     @close="onPaymentClose"
     @confirm="onPaymentConfirm"
-    ref="paymentRef"
-    order-id="3123123"
     :amount="preOrderInfo.actualPayment"
+    :order-id="orderId"
+    ref="paymentRef"
   />
 </template>
 

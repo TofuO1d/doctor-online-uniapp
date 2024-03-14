@@ -1,0 +1,1 @@
+"use strict";const e=require("../common/vendor.js"),r=e.defineStore("user",(()=>{const r=e.ref(""),s=e.ref("/pages/index/index"),t=e.ref("switchTab");return{token:r,userId:e.ref(""),redirectURL:s,openType:t}}),{persist:{paths:["token","userId","redirectURL","openType"]}});exports.useUserStore=r;

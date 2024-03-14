@@ -4,23 +4,21 @@ import { defineStore } from 'pinia'
 export const useUserStore = defineStore(
   'user',
   () => {
-    // 存用户登录状态
+    // 记录用户登录状态
     const token = ref('')
-
-    // 默认跳转到首页面
-    const recirectURL = ref('/pages/index/index')
-
-    // 跳转页面的方式
+    // 记录登录成功后要路转的地址（默认值为首页）
+    const redirectURL = ref('/pages/index/index')
+    // 跳转地址时采用的 API 名称
     const openType = ref('switchTab')
 
-    // 记录用户的ID
+    // 用户ID
     const userId = ref('')
 
-    return { token, userId, recirectURL, openType }
+    return { token, userId, redirectURL, openType }
   },
   {
     persist: {
-      paths: ['token', 'userId', 'recirectURL', 'openType'],
+      paths: ['token', 'userId', 'redirectURL', 'openType'],
     },
   }
 )

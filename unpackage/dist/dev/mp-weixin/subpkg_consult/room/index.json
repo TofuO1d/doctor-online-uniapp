@@ -1,0 +1,13 @@
+{
+  "navigationBarTitleText": "问诊室",
+  "usingComponents": {
+    "uni-easyinput": "../../uni_modules/uni-easyinput/components/uni-easyinput/uni-easyinput",
+    "uni-icons": "../../uni_modules/uni-icons/components/uni-icons/uni-icons",
+    "room-status": "./components/room-status",
+    "patient-info": "./components/patient-info",
+    "notify-info": "./components/notify-info",
+    "message-info": "./components/message-info",
+    "prescription-info": "./components/prescription-info",
+    "rate-info": "./components/rate-info"
+  }
+}

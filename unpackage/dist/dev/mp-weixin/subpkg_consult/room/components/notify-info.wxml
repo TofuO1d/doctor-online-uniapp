@@ -1,0 +1,1 @@
+<view class="message-tips"><view class="wrapper"><text wx:if="{{a}}" class="label">温馨提示: </text><slot/></view></view>

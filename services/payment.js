@@ -2,8 +2,8 @@
 import { http } from '@/utils/http'
 
 /**
- * 三方支付（暂时只支持支付宝支付）
+ * 三方支付（微信支付、支付宝支付、云闪付）
  */
-export const orderPayApi = (data) => {
+export const paymentApi = (data) => {
   return http.post('/patient/consult/pay', data)
 }

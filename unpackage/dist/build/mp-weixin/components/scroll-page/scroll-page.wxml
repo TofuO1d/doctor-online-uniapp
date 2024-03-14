@@ -1,0 +1,1 @@
+<scroll-view style="{{'height:' + a + ';' + ('box-sizing:' + 'border-box') + ';' + ('border-bottom:' + b) + ';' + ('background-color:' + c)}}" scroll-y refresherEnabled="{{d}}" refresherTriggered="{{e}}" bindrefresherrefresh="{{f}}" bindscrolltolower="{{g}}"><view class="scroll-page-content"><slot></slot></view></scroll-view>

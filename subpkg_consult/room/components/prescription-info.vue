@@ -9,7 +9,7 @@
 </script>
 
 <template>
-  <!-- 处方消息（22） -->
+  <!-- 处方消息（22）-->
   <view class="e-prescription">
     <view class="prescription-content">
       <view class="list-title">

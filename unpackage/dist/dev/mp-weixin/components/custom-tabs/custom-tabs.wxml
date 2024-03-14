@@ -1,0 +1,1 @@
+<view class="custom-tabs"><view wx:for="{{a}}" wx:for-item="tab" wx:key="b" bindtap="{{tab.c}}" class="{{[tab.d && 'active', 'custom-tabs-bar']}}"><text class="tabbar-text">{{tab.a}}</text></view><view class="custom-tabs-cursor" style="{{'left:' + b}}"></view></view>

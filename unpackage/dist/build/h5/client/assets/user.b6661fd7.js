@@ -1,0 +1,1 @@
+import{h as s}from"./http.dd4042ae.js";const t=t=>s.get("/code",{params:t}),o=t=>s.post("/login",t),a=t=>s.post("/login/password",t),p=()=>s.get("/patient/myUser"),i=t=>s.post("/login/thirdparty",t),n=t=>s.post("/login/binding",t);export{i as Q,o as a,n as b,a as l,p as u,t as v};

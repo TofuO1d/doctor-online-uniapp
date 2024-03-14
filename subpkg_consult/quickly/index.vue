@@ -1,5 +1,5 @@
 <script setup>
-  // 获取地址参数
+  // 接收地址参数
   const props = defineProps({
     type: String,
   })
@@ -28,7 +28,7 @@
           title="普通图文问诊"
           note="二甲主治及以上级别医生"
           show-arrow
-          :to="`/subpkg_consult/department/index?type=${props.type}&illnessType=0`"
+          :to="`/subpkg_consult/department/index?type=${type}&illnessType=0`"
           thumb="/static/images/consult-type-2.png"
           thumb-size="lg"
         />

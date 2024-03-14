@@ -2,7 +2,7 @@
   import { ref } from 'vue'
   import { orderDetailApi } from '@/services/medicine'
 
-  // 接收地址参数
+  // 获取地址的参数
   const props = defineProps({
     orderId: String,
   })
@@ -10,17 +10,17 @@
   // 药品订单详情
   const orderDetail = ref({})
 
-  // 获取订单详情
-  async function getOrderDetail() {
-    // 调用接口
+  // 查询订单详情
+  async function getOrderDetail(orderId) {
+    // 订单详情接口
     const { code, data, message } = await orderDetailApi(props.orderId)
     // 检测接口是否调用成功
     if (code !== 10000) return uni.utils.toast(message)
-    // 接收返回的数据
+    // 渲染订单数据
     orderDetail.value = data
   }
 
-  // 查询订单详情
+  // 查询药品订单详情
   getOrderDetail()
 </script>
 <template>

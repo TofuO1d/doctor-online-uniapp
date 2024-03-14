@@ -13,9 +13,9 @@
 
 <template>
   <view class="feed-list">
-    <view v-for="item in list" :key="item.id" class="feed-list-item">
+    <view v-for="item in props.list" :key="item.id" class="feed-list-item">
       <view class="feed-meta">
-        <image class="doctor-avatar" :src="item.creatorAvatar" />
+        <image class="doctor-avatar" src="/static/uploads/doctor-avatar.jpg" />
         <view class="doctor-info">
           <text class="name">{{ item.creatorName }}</text>
           <text class="desc">
@@ -24,7 +24,9 @@
             {{ item.creatorTitles }}
           </text>
         </view>
-        <button v-if="item.likeFlag === 1" class="doctor-button" plain>已关注</button>
+        <button v-if="item.likeFlag === 1" class="doctor-button" plain>
+          已关注
+        </button>
         <button v-else class="doctor-button" plain>+ 关注</button>
       </view>
       <view class="feed-topic">{{ item.title }}</view>
@@ -94,7 +96,6 @@
   }
 
   .doctor-button {
-    display: flex;
     width: 140rpx;
     height: 56rpx;
     line-height: 56rpx;
@@ -123,7 +124,6 @@
     font-size: 28rpx;
     color: #6f6f6f;
 
-    // 处理文字溢出
     .text {
       @include text-overflow(3);
     }

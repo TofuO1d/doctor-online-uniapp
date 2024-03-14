@@ -3,11 +3,12 @@
   import { onShow } from '@dcloudio/uni-app'
   import { patientListApi, removePatientApi } from '@/services/patient'
 
-  // 患者列表数据
-  const patientList = ref([])
+  // 是否显示页面内容
   const pageShow = ref(false)
+  // 患者列表
+  const patinetList = ref([])
 
-  // 侧滑按钮
+  // 侧滑按钮配置
   const swipeOptions = ref([
     {
       text: '删除',
@@ -17,30 +18,31 @@
     },
   ])
 
-  // 生命周期
+  // 生命周期（页面显示）
   onShow(() => {
     getPatientList()
   })
 
-  // 点击删除按钮
+  // 滑动操作点击
   async function onSwipeActionClick(id, index) {
-    // 调用接口
+    // 删除患者接口
     const { code, message } = await removePatientApi(id)
     // 检测接口是否调用成功
     if (code !== 10000) return uni.utils.toast(message)
-    // 删除Vue实例中的数据
-    patientList.value.splice(index, 1)
+
+    // Vue 实例中的数据也要同步删除
+    patinetList.value.splice(index, 1)
   }
 
-  // 获取患者列表
+  // 家庭档案（患者）列表
   async function getPatientList() {
-    // 调用API
-    const { code, data, message } = await patientListApi()
+    // 患者列表接口
+    const { code, data } = await patientListApi()
     // 检测接口是否调用成功
-    if (code !== 10000) return uni.utils.toast(message)
-    // 渲染数据
-    patientList.value = data
-    // 显示页面
+    if (code !== 10000) return uni.utils.showToast('列表获取失败，稍后重试!')
+    // 渲染接口数据
+    patinetList.value = data
+    // 展示页面内容
     pageShow.value = true
   }
 </script>
@@ -49,10 +51,9 @@
   <scroll-page>
     <view class="archive-page" v-if="pageShow">
       <view class="archive-tips">最多可添加6人</view>
-
       <uni-swipe-action>
         <uni-swipe-action-item
-          v-for="(patient, index) in patientList"
+          v-for="(patient, index) in patinetList"
           :key="patient.id"
           :right-options="swipeOptions"
           @click="onSwipeActionClick(patient.id, index)"
@@ -63,7 +64,9 @@
           >
             <view class="archive-info">
               <text class="name">{{ patient.name }}</text>
-              <text class="id-card">321***********6164</text>
+              <text class="id-card">
+                {{ patient.idCard.replace(/^(.{6}).+(.{4})$/, '$1********$2') }}
+              </text>
               <text v-if="patient.defaultFlag === 1" class="default">默认</text>
             </view>
             <view class="archive-info">
@@ -87,7 +90,7 @@
       </uni-swipe-action>
 
       <!-- 添加按钮 -->
-      <view v-if="patientList.length < 6" class="archive-card">
+      <view v-if="true" class="archive-card">
         <navigator
           class="add-link"
           hover-class="none"

@@ -1,22 +1,19 @@
 <script setup>
-  // 接收组件外部传入的数据
+  // 接收外部传入的数据
   const props = defineProps({
-    type: Number,
-    default: 31,
+    type: {
+      type: Number,
+      default: 31,
+    },
   })
 </script>
 
 <template>
-  <!-- 普通通知（31） -->
-  <!--  <view class="message-tips">
-    <view class="wrapper">医护人员正在赶来，请耐心等候</view>
-  </view> -->
-
-  <!-- 温馨提示（32） -->
   <view class="message-tips">
+    <!-- 温馨提示（32） -->
     <view class="wrapper">
-      <text v-if="props.type === 32" class="label">温馨提示:</text>
-      <slot></slot>
+      <text v-if="props.type === 32" class="label">温馨提示: </text>
+      <slot />
     </view>
   </view>
 </template>

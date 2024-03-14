@@ -2,7 +2,7 @@
   import { ref } from 'vue'
   import { orderDetailApi } from '@/services/medicine'
 
-  // 获取地址参数
+  // 接收地址的ID
   const props = defineProps({
     id: String,
   })
@@ -13,16 +13,26 @@
   // 支付方式
   const paymentMethods = ['微信支付', '支付宝支付']
 
-  // 获取药品订单详情
+  // 订单状态
+  const orderStatus = ref({
+    10: '待支付',
+    11: '待发货',
+    12: '待收货',
+    13: '已完成',
+    14: '已取消',
+  })
+
+  // 药品订单详情
   async function getOrderDetail() {
-    // 调用接口
+    // 订单详情接口
     const { code, data, message } = await orderDetailApi(props.id)
     // 检测接口是否调用成功
     if (code !== 10000) return uni.utils.toast(message)
-    // 接收返回的数据
+    // 渲染订单详情数据
     orderDetail.value = data
   }
 
+  // 获取药品订单详情
   getOrderDetail()
 </script>
 
@@ -31,11 +41,10 @@
     <view class="medicine-page">
       <view class="page-header">
         <view class="order-status">
-          <text class="label">药品订单 {{ orderDetail.actualPayment }}元</text>
-          <text class="status">{{ orderDetail.statusValue }}</text>
+          <text class="label">药品订单 {{ orderDetail.payment }}元</text>
+          <text class="status">{{ orderStatus[orderDetail.status] }}</text>
         </view>
         <view class="order-shippment">
-          <!-- 待发货 -->
           <template v-if="orderDetail.status === 11">
             <view class="region">
               <text class="iconfont icon-location"></text>
@@ -51,18 +60,13 @@
               {{ orderDetail.addressInfo.mobile }}
             </view>
           </template>
-          <!-- 待收货 -->
           <template v-if="orderDetail.status === 12">
             <navigator
               hover-class="none"
               :url="`/subpkg_medicine/timeline/index?id=${orderDetail.id}`"
             >
-              <view class="marker">
-                {{ orderDetail.expressInfo.content }}
-              </view>
-              <view class="datetime">
-                {{ orderDetail.expressInfo.time }}
-              </view>
+              <view class="marker">{{ orderDetail.expressInfo.content }}</view>
+              <view class="datetime">{{ orderDetail.expressInfo.time }}</view>
               <view class="arrow">
                 <uni-icons size="18" color="#C3C3C5" type="forward" />
               </view>

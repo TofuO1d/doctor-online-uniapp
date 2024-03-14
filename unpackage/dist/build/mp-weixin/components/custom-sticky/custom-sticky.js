@@ -1,0 +1,1 @@
+"use strict";const o=require("../../common/vendor.js"),e={__name:"custom-sticky",props:{offsetTop:{type:[String,Number],default:0},backgroundColor:{type:String,default:"#fff"}},setup(e){const t=e,r=o.computed((()=>({paddingTop:t.offsetTop,backgroundColor:t.backgroundColor})));return(e,t)=>({a:o.s(o.unref(r))})}};wx.createComponent(e);

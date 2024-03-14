@@ -1,17 +1,19 @@
 <script setup>
+  import { ref } from 'vue'
   import { followDoctorApi } from '@/services/doctor'
-  // 接收组件外部传入的数据
+
+  // 接收组件外部的数据
   const props = defineProps({
     list: Array,
   })
 
   // 关注医生
   async function onFollowButtonClick(doctor) {
-    // 调用接口
+    // 关注医生接口
     const { code, data, message } = await followDoctorApi(doctor.id)
     // 检测接口是否调用成功
     if (code !== 10000) return uni.utils.toast(message)
-    // 变更关注状态
+    // 关注成功
     doctor.likeFlag = 1
   }
 </script>
@@ -25,14 +27,19 @@
     </view>
     <scroll-view scroll-x :show-scrollbar="false">
       <view class="doctor-list-wrapper">
-        <view v-for="item in props.list" :key="item.id" class="doctor-list-item">
+        <view
+          v-for="(item, index) in list"
+          :key="item.id"
+          class="doctor-list-item"
+        >
           <image class="doctor-avatar" :src="item.avatar" />
           <view class="name">{{ item.name }}</view>
-          <view class="unit">{{ item.hospitalName }} {{ item.depName }}</view>
+          <view class="unit"> {{ item.hospitalName }} {{ item.depName }} </view>
           <view class="level">{{ item.positionalTitles }}</view>
-
           <button v-if="item.likeFlag === 1" class="follow">已关注</button>
-          <button @click="onFollowButtonClick(item)" v-else class="follow">+ 关注</button>
+          <button v-else @click="onFollowButtonClick(item)" class="follow">
+            + 关注
+          </button>
         </view>
       </view>
     </scroll-view>

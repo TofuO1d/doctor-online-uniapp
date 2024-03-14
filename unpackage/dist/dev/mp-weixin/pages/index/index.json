@@ -1,0 +1,12 @@
+{
+  "navigationBarTitleText": "优医咨询",
+  "navigationStyle": "custom",
+  "usingComponents": {
+    "uni-icons": "../../uni_modules/uni-icons/components/uni-icons/uni-icons",
+    "custom-tabs": "../../components/custom-tabs/custom-tabs",
+    "custom-sticky": "../../components/custom-sticky/custom-sticky",
+    "scroll-page": "../../components/scroll-page/scroll-page",
+    "feed-list": "./components/feed-list",
+    "doctor-list": "./components/doctor-list"
+  }
+}

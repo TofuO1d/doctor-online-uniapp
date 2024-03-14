@@ -1,0 +1,1 @@
+"use strict";const t=require("../utils/http.js");exports.doctorListApi=(e=1,p=5)=>t.http.get("/home/page/doc",{params:{current:e,pageSize:p}}),exports.evaluateDoctorApi=e=>t.http.post("/patient/order/evaluate",e),exports.feedListApi=e=>t.http.get("/patient/home/knowledge",{params:e}),exports.followDoctorApi=(e,p="doc")=>t.http.post("/like",{id:e,type:p});

@@ -1,42 +1,39 @@
 <template>
   <view class="uni-countdown">
-    <text v-if="showDay" :style="[timeStyle]" class="uni-countdown__number">{{
-      d
-    }}</text>
-    <text
-      v-if="showDay"
-      :style="[splitorStyle]"
-      class="uni-countdown__splitor"
-      >{{ dayText }}</text
-    >
-    <text v-if="showHour" :style="[timeStyle]" class="uni-countdown__number">{{
-      h
-    }}</text>
+    <text v-if="showDay" :style="[timeStyle]" class="uni-countdown__number">
+      {{ d }}
+    </text>
+    <text v-if="showDay" :style="[splitorStyle]" class="uni-countdown__splitor">
+      {{ dayText }}
+    </text>
+    <text v-if="showHour" :style="[timeStyle]" class="uni-countdown__number">
+      {{ h }}
+    </text>
     <text
       v-if="showHour"
       :style="[splitorStyle]"
       class="uni-countdown__splitor"
-      >{{ showColon ? ':' : hourText }}</text
     >
-    <text
-      v-if="showMiniute"
-      :style="[timeStyle]"
-      class="uni-countdown__number"
-      >{{ i }}</text
-    >
+      {{ showColon ? ':' : hourText }}
+    </text>
+    <text v-if="showMiniute" :style="[timeStyle]" class="uni-countdown__number">
+      {{ i }}
+    </text>
     <text
       v-if="showMiniute"
       :style="[splitorStyle]"
       class="uni-countdown__splitor"
-      >{{ showColon ? ':' : minuteText }}</text
     >
+      {{ showColon ? ':' : minuteText }}
+    </text>
     <text :style="[timeStyle]" class="uni-countdown__number">{{ s }}</text>
     <text
       v-if="!showColon"
       :style="[splitorStyle]"
       class="uni-countdown__splitor"
-      >{{ secondText }}</text
     >
+      {{ secondText }}
+    </text>
   </view>
 </template>
 <script>

@@ -1,0 +1,8 @@
+{
+  "navigationBarTitleText": "图文问诊",
+  "usingComponents": {
+    "uni-easyinput": "../../uni_modules/uni-easyinput/components/uni-easyinput/uni-easyinput",
+    "uni-file-picker": "../../uni_modules/uni-file-picker/components/uni-file-picker/uni-file-picker",
+    "scroll-page": "../../components/scroll-page/scroll-page"
+  }
+}

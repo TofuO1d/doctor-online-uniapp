@@ -1,0 +1,1 @@
+.custom-section{padding:40rpx 30rpx 30rpx;margin-bottom:20rpx;background-color:#fff;border-radius:20rpx}.custom-section-header{display:flex;justify-content:space-between;line-height:1;margin-bottom:20rpx}.section-header-title{font-size:32rpx;color:#333}.section-header-right{display:flex;align-items:center;font-size:26rpx;color:#c3c3c5}

@@ -1,21 +1,66 @@
 <script setup>
   import { ref, computed } from 'vue'
   import { storeToRefs } from 'pinia'
-  import { useConsultStore } from '@/stores/consult.js'
+  import { useConsultStore } from '@/stores/consult'
 
-  // 获取地址参数
+  // 病情相关的数据
+  const { illnessInfo, initalValue } = storeToRefs(useConsultStore())
+
+  // 接收地址的参数
   const props = defineProps({
     type: String,
     illnessType: String,
     depId: String,
   })
 
-  // 是可解构的，但 illnessInfo 和 initalValue 不再是响应式
-  // const { illnessInfo, initalValue } = useConsultStore()
+  // 患病时长
+  const illnessTimes = [
+    { value: 1, text: '一周内' },
+    { value: 2, text: '一月内' },
+    { value: 3, text: '半年内' },
+    { value: 4, text: '半年以上' },
+  ]
+  // 是否就诊过
+  const consultFlags = [
+    { value: 1, text: '就诊过' },
+    { value: 0, text: '没有就诊过' },
+  ]
 
-  // 这种方式 illnessInfo 和 initalValue 是响应式数据
-  const { illnessInfo, initalValue } = storeToRefs(useConsultStore())
+  // 是否允许下一步操作
+  const nextStepEnable = computed(() => {
+    // 验证必要数据是否填写（接口中只要求病情描述必填）
+    return (
+      illnessInfo.value.illnessDesc !== '' &&
+      illnessInfo.value.illnessTime !== '' &&
+      illnessInfo.value.consultFlag !== ''
+    )
+  })
 
+  // 选择患病时长
+  function onTimeTagClick(value) {
+    // 记录用户选择的数据
+    illnessInfo.value.illnessTime = value
+  }
+
+  function onFlagTagClick(value) {
+    // 记录用户选择的数据
+    illnessInfo.value.consultFlag = value
+  }
+
+  // 下一步选择患者
+  function onNextStepClick() {
+    // 问诊相关数据
+    const consultStore = useConsultStore()
+    // 缓存地址参数
+    consultStore.type = props.type
+    consultStore.illnessType = props.illnessType
+    consultStore.depId = props.depId
+
+    // 跳转到选择患者页面
+    uni.navigateTo({ url: '/subpkg_consult/patient/index' })
+  }
+
+  // 提示用户是否恢复之前填写的病情数据
   if (illnessInfo.value.illnessDesc) {
     uni.showModal({
       title: '温馨提示',
@@ -25,71 +70,10 @@
       cancelColor: '#848484',
       success({ confirm }) {
         // 清空 Pinia 中记录的数据
-        if (!confirm) illnessInfo.value = { ...initalValue.value }
+        if (!confirm) illnessInfo.value = initalValue.value
       },
     })
   }
-
-  // 病情数据
-  // const illnessInfo = ref({
-  //   // 病情文字描述
-  //   illnessDesc: '',
-  //   // 患病时长
-  //   illnessTime: '',
-  //   // 是否就诊过
-  //   consultFlag: '',
-  //   // 病情图片介绍
-  //   pictures: [],
-  // })
-
-  // 患病时长
-  const illnessTimes = [
-    { value: 1, text: '一周内' },
-    { value: 2, text: '一月内' },
-    { value: 3, text: '半年内' },
-    { value: 4, text: '半年以上' },
-  ]
-
-  // 是否就诊过
-  const consultFlags = [
-    { value: 1, text: '就诊过' },
-    { value: 0, text: '没有就诊过' },
-  ]
-
-  // 数据验证，是否允许下一步操作
-  const nextStepEnable = computed(() => {
-    return (
-      illnessInfo.value.illnessDesc !== '' &&
-      illnessInfo.value.illnessTime !== '' &&
-      illnessInfo.value.consultFlag !== ''
-    )
-  })
-
-  // 切换患病时长
-  function onTimeTagClick(value) {
-    illnessInfo.value.illnessTime = value
-  }
-
-  // 切换是否就诊过
-  function onFlagTagClick(value) {
-    // 记录用户选择的数据
-    illnessInfo.value.consultFlag = value
-  }
-
-  // 下一步操作
-  function onNextStepClick() {
-    // 将地址中的参数存入 Pinia
-    const consultStore = useConsultStore()
-    // 存储地址参数
-    consultStore.type = props.type
-    consultStore.illnessType = props.illnessType
-    consultStore.depId = props.depId
-
-    // 跳转到下一页
-    uni.navigateTo({ url: '/subpkg_consult/patient/index' })
-  }
-
-  // 如果 文字描述、患病时长、是否就诊 三个值不为空时
 </script>
 
 <template>
@@ -113,8 +97,8 @@
       <view class="patient-info">
         <view class="description">
           <uni-easyinput
-            type="textarea"
             v-model="illnessInfo.illnessDesc"
+            type="textarea"
             :styles="{ backgroundColor: '#f6f6f6' }"
             :input-border="false"
             placeholder-style="font-size: 30rpx; color: #979797"
@@ -127,8 +111,8 @@
           <text
             v-for="illnessTime in illnessTimes"
             :key="illnessTime.value"
-            :class="{ active: illnessTime.value === illnessInfo.illnessTime }"
             @click="onTimeTagClick(illnessTime.value)"
+            :class="{ active: illnessTime.value === illnessInfo.illnessTime }"
             class="tag"
           >
             {{ illnessTime.text }}
@@ -148,12 +132,11 @@
           </text>
         </view>
       </view>
-
       <!-- 上传图片 -->
       <view class="patient-picture">
         <uni-file-picker
-          v-model="illnessInfo.pictures"
           title="上传病情相关图片 (仅医生可见)"
+          v-model="illnessInfo.pictures"
           limit="8"
           :image-styles="{ width: '160rpx', height: '160rpx' }"
           file-extname="png,jpg,gif,webp"
@@ -162,7 +145,7 @@
     </view>
     <!-- 下一步操作 -->
     <view class="next-step">
-      <button :disabled="!nextStepEnable" @click="onNextStepClick" class="uni-button">
+      <button @click="onNextStepClick" :disabled="!nextStepEnable" class="uni-button">
         下一步
       </button>
     </view>

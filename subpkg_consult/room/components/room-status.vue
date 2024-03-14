@@ -6,16 +6,17 @@
     countdown: Number,
   })
 </script>
+
 <template>
   <!-- 咨询室状态 -->
   <view class="room-status">
     <!-- 待接诊(status: 2) -->
     <view v-if="props.status === 2" class="status waiting">
-      {{ props.statusValue }}
+      <text class="label">{{ props.statusValue }}</text>
     </view>
 
-    <!-- 咨询中 status: 3 -->
-    <view v-if="props.status === 3" class="status countdown">
+    <!-- 咨询中(status: 3) -->
+    <view class="status countdown" v-if="props.status === 3">
       <text class="label">{{ props.statusValue }}</text>
       <view class="time">
         剩余时间:

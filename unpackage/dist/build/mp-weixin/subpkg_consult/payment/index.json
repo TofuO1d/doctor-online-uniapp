@@ -1,0 +1,10 @@
+{
+  "navigationBarTitleText": "等待付款",
+  "usingComponents": {
+    "uni-list-item": "../../uni_modules/uni-list/components/uni-list-item/uni-list-item",
+    "uni-list": "../../uni_modules/uni-list/components/uni-list/uni-list",
+    "uni-section": "../../uni_modules/uni-section/components/uni-section/uni-section",
+    "scroll-page": "../../components/scroll-page/scroll-page",
+    "custom-payment": "../../components/custom-payment/custom-payment"
+  }
+}

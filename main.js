@@ -1,38 +1,36 @@
 import { createSSRApp } from 'vue'
+// 导入 Pinia
 import { createPinia } from 'pinia'
-// import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
+// Pinia 持久化插件
 import { createPersistedState } from 'pinia-plugin-persistedstate'
+// import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
 
 import App from './App'
-import '@/utils/utils.js'
+import '@/utils/utils'
 
 export function createApp() {
+  const app = createSSRApp(App)
+
   // 创建 Pinia 实例
   const pinia = createPinia()
-  const app = createSSRApp(App)
-  // 安装 Pinia 插件
+
+  // 应用 Pinia 插件
   // pinia.use(piniaPluginPersistedstate)
 
-  // 进阶用法
   pinia.use(
     createPersistedState({
-      // 用来定义本地存储
+      key: (id) => `__persisted__${id}`,
       storage: {
-        // 用获取本地存储
-        getItem(key) {
-          // 使用 uni-app 的 API
-          return uni.getStorageSync(key)
-        },
-        // 用来存本地存储
         setItem(key, value) {
-          // 使用 uni-app 的 API
           uni.setStorageSync(key, value)
+        },
+        getItem(key) {
+          return uni.getStorageSync(key)
         },
       },
     })
   )
 
-  // 安装 Pinia
   app.use(pinia)
 
   return {

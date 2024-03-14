@@ -2,7 +2,7 @@
   import dayjs from 'dayjs'
   import { useUserStore } from '@/stores/user.js'
 
-  // 获取用户ID
+  // 用户ID
   const { userId } = useUserStore()
 
   // 接收外部传入的数据
@@ -55,6 +55,7 @@
     }
 
     .room-message {
+      // flex: 1;
       margin-left: 20rpx;
     }
 

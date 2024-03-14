@@ -1,0 +1,7 @@
+{
+  "navigationBarTitleText": "订单列表",
+  "usingComponents": {
+    "custom-tabs": "../../components/custom-tabs/custom-tabs",
+    "order-list": "./components/order-list"
+  }
+}

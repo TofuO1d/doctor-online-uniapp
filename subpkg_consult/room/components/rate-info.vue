@@ -6,7 +6,7 @@
   const props = defineProps({
     orderId: String,
     doctorId: String,
-    // 是否评价过
+    // 是否已评价过
     hasEvaluate: {
       type: Boolean,
       default: false,
@@ -18,48 +18,51 @@
     },
   })
 
-  // 评价相关数据
+  // 评价内容
   const formData = ref({
-    score: props.evaluateDoc.score || 0,
-    content: props.evaluateDoc.content || '',
-    anonymousFlag: 1,
+    score: props.evaluateDoc.score,
+    content: props.evaluateDoc.content,
+    anonymousFlag: props.evaluateDoc.anonymousFlag || 0,
   })
 
   // 是否已经评价过
   const hasEvaluate = ref(props.hasEvaluate)
 
-  // 字数统计
+  // 统计字数
   const wordCount = computed(() => {
     return formData.value.content?.length || 0
   })
 
-  // 是否允许按钮点击
+  // 是否允许提交
   const buttonEnable = computed(() => {
-    return formData.value.score > 0
+    return formData.value.score
   })
 
-  // 切换是否匿名
-  function onAnonymousClick() {
-    // 0 和 1 之间切换
-    formData.value.anonymousFlag = Math.abs(formData.value.anonymousFlag - 1)
-  }
-
-  // 提交医生评价
+  // 提交表单
   async function onFormSubmit() {
     // 调用接口
     const { code, data, message } = await evaluateDoctorApi({
-      ...formData.value,
       docId: props.doctorId,
       orderId: props.orderId,
+      ...formData.value,
     })
+
     // 检测接口是否调用成功
     if (code !== 10000) return uni.utils.toast(message)
-    // 提示文字
-    uni.utils.toast('感谢您的评价!')
-    // 变更评价状态
+
+    uni.utils.toast('感谢您的评价！')
+
+    // 标记已经评价过
     hasEvaluate.value = true
   }
+
+  // 是否匿名评价
+  function onAnonymousClick() {
+    console.log(1111)
+    formData.value.anonymousFlag = Math.abs(formData.value.anonymousFlag - 1)
+  }
 </script>
+
 <template>
   <!-- 医生评价 -->
   <view class="doctor-rating">
@@ -70,9 +73,9 @@
     </view>
     <view class="text">
       <uni-easyinput
-        v-model="formData.content"
         type="textarea"
         maxlength="150"
+        v-model="formData.content"
         :input-border="false"
         :styles="{ backgroundColor: '#f6f6f6' }"
         placeholder-style="font-size: 28rpx; color: #979797"
@@ -80,9 +83,9 @@
       />
       <text class="word-count">{{ wordCount }}/150</text>
     </view>
-    <view v-if="!hasEvaluate" @click="onAnonymousClick" class="anonymous">
+    <view @click="onAnonymousClick" v-if="!hasEvaluate" class="anonymous">
       <uni-icons
-        v-if="formData.anonymousFlag === 1"
+        v-if="formData.anonymousFlag"
         size="16"
         color="#16C2A3"
         type="checkbox-filled"
@@ -110,6 +113,7 @@
 </script>
 <style lang="scss">
   .doctor-rating {
+    // align-self: stretch;
     padding: 30rpx 30rpx 40rpx;
     border-radius: 20rpx;
     background-color: #fff;

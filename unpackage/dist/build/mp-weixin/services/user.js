@@ -1,0 +1,1 @@
+"use strict";const t=require("../utils/http.js");exports.loginByMobileApi=s=>t.http.post("/login",s),exports.loginByPassword=s=>t.http.post("/login/password",s),exports.userInfoApi=()=>t.http.get("/patient/myUser"),exports.verifyCodeApi=s=>t.http.get("/code",{params:s});

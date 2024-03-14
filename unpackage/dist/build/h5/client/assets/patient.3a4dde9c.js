@@ -1,0 +1,1 @@
+import{h as t}from"./http.dd4042ae.js";const a=a=>t.post("/patient/add",a),e=a=>t.get("/patient/mylist"),p=a=>t.delete(`/patient/del/${a}`),s=a=>t.get(`/patient/info/${a}`),i=a=>t.put("/patient/update",a);export{a,e as b,s as p,p as r,i as u};

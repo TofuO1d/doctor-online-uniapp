@@ -1,31 +1,60 @@
 <script setup>
   import { ref } from 'vue'
-  import { createOrderApi, preOrderApi } from '@/services/consult'
-  // import { storeToRefs } from 'pinia'
   import { useConsultStore } from '@/stores/consult'
+  import { preOrderApi, createOrderApi } from '@/services/consult'
   import { patientDetailApi } from '@/services/patient'
-  import { orderPayApi } from '@/services/payment'
+  import { paymentApi } from '@/services/payment'
 
-  // 解构数据，获取问诊类型
-  // const { type } = storeToRefs(useConsultStore())
-  const { type, patientId, illnessInfo, illnessType, depId } = useConsultStore()
+  // 患者相关的数据（不具有响应性）
+  const { type, illnessType, patientId, illnessInfo, depId } = useConsultStore()
 
   // 预付订单信息
   const preOrderInfo = ref({})
-  // 患者数据
+  // 就诊患者信息
   const patientDetail = ref({})
-  // 订单ID
+  // 待支付订单ID
   const orderId = ref('')
 
-  // 支付组件实例
+  // 支付组件引用
   const paymentRef = ref()
+  const uniPayRef = ref()
 
-  // 创建订单（待付款）
-  function onPaymentButtonClick() {
-    createOrder()
+  // 立即支付（生成待支付订单）
+  async function onPaymentButtonClick() {
+    if (orderId.value !== '') return uni.utils.toast('不能重复创建订单!')
+
+    // 处理病情相关图片数据（过滤多余的数据）
+    illnessInfo.pictures = illnessInfo.pictures.map(({ url, uuid }) => {
+      return { id: uuid, url }
+    })
+
+    // 生成订单接口
+    const { code, data, message } = await createOrderApi({
+      type,
+      illnessType,
+      depId,
+      patientId,
+      ...illnessInfo,
+    })
+
+    // 检测接口是否计用成功
+    if (code !== 10000) return uni.utils.toast(message)
+
+    // 获取待支付订单ID
+    orderId.value = data.id
+
+    // 选择支付渠道
+    paymentRef.value.open()
+
+    // uniPayRef.value.open({
+    //   total_fee: 1, // 支付金额，单位分 100 = 1元
+    //   order_no: data.id, // 业务系统订单号（即你自己业务系统的订单表的订单号）
+    //   description: '问诊订单', // 支付描述
+    //   type: 'consult', // 支付回调类型，可自定义,
+    // })
   }
 
-  // 用户关闭支付组件
+  // 当支付弹层关闭时
   async function onPaymentClose() {
     const { confirm } = await uni.showModal({
       title: '关闭支付',
@@ -39,95 +68,52 @@
     if (!confirm) paymentRef.value.close()
   }
 
-  // 用户点击确认支付
+  // 支付渠道确认支付
   async function onPaymentConfirm({ index }) {
     if (index === 0) return uni.utils.toast('暂不支持微信支付!')
 
-    // 调用支付接口
-    const { code, data, message } = await orderPayApi({
-      paymentMethod: index,
+    // 调用后端提供的支付接口
+    const { code, data, message } = await paymentApi({
       orderId: orderId.value,
-      payCallback: 'http://localhost:5173/#/subpkg_consult/room/index',
+      paymentMethod: index,
+      payCallback: 'http://localhost/subpkg_consult/room/index',
     })
 
-    // 检测接口是否调用成功
+    // 接口是否调用成功
     if (code !== 10000) return uni.utils.toast(message)
 
     // #ifdef H5
-    // 引导用户支付（地址跳转方式）
+    // 支付宝支付页面
     window.location.href = data.payUrl
     // #endif
-
-    // #ifdef MP-WEIXIN
-    // 引导用户支付（wx.requestPayment 小程序）
-    wx.requestPayment({
-      // 4 个参数
-    })
-    // #endif
-
-    // App SDK
   }
 
   // 生成预付订单
   async function createPreOrder() {
-    // 调用接口
-    const { code, data, message } = await preOrderApi(type)
+    // 预付订单信息
+    const { code, data, message } = await preOrderApi(type, {
+      illnessType,
+    })
     // 检测接口是否调用成功
     if (code !== 10000) return uni.utils.toast(message)
+
     // 渲染订单数据
     preOrderInfo.value = data
   }
 
-  // 生成待付订单
-  async function createOrder() {
-    if (orderId.value !== '') return uni.utils.toast('订单不能重复创建!')
-
-    // 处理上传的图片，要求包含 ID 和 url （接口规订的）
-    // 订单只能提交一次！！！
-    illnessInfo.pictures = illnessInfo.pictures.map(({ url, uuid }) => {
-      return { url, id: uuid }
-    })
-
-    // 调用接口
-    const { code, data, message } = await createOrderApi({
-      type,
-      patientId,
-      illnessType,
-      depId,
-      ...illnessInfo,
-    })
-
-    // 检测接口是否调用成功
-    if (code !== 10000) return uni.utils.toast(message)
-    // 接收订单ID
-    orderId.value = data.id
-
-    // 将 Pinia 中缓存的数据清空掉（订单已创建完成）
-    const consultStore = useConsultStore()
-    // 病情描述
-    consultStore.illnessInfo = consultStore.initalValue
-    consultStore.type = ''
-    consultStore.illnessType = ''
-    consultStore.depId = ''
-    consultStore.patientId = ''
-
-    // 打开支付组件
-    paymentRef.value.open()
-  }
-
-  // 患者详情
+  // 获取患者信息
   async function getPatientDetail() {
-    // 调用接口
+    // 患者详情接口
     const { code, data, message } = await patientDetailApi(patientId)
     // 检测接口是否调用成功
     if (code !== 10000) return uni.utils.toast(message)
-    // 接收并渲染数据
+    // 渲染患者数据
     patientDetail.value = data
   }
 
-  // 生成预付订单
+  // 生成预支付订单
   createPreOrder()
-  // 获取患者信息
+  // 获取就诊患者信息
   getPatientDetail()
 </script>
 
@@ -154,12 +140,12 @@
           />
           <uni-list-item title="积分抵扣">
             <template #footer>
-              <view class="uni-list-text-red">-¥{{ preOrderInfo.pointDeduction }}</view>
+              <view class="uni-list-text-red"> -¥{{ preOrderInfo.pointDeduction }} </view>
             </template>
           </uni-list-item>
           <uni-list-item title="实付款">
             <template #footer>
-              <view class="uni-list-text-red">¥{{ preOrderInfo.actualPayment }}</view>
+              <view class="uni-list-text-red"> ¥{{ preOrderInfo.actualPayment }} </view>
             </template>
           </uni-list-item>
         </uni-list>
@@ -193,18 +179,23 @@
     </view>
     <!-- 下一步操作 -->
     <view class="next-step">
-      <view class="total-amount"> 合计: <text class="number">¥39.00</text> </view>
+      <view class="total-amount">
+        合计: <text class="number">¥{{ preOrderInfo.actualPayment }}</text>
+      </view>
       <button @click="onPaymentButtonClick" class="uni-button">立即支付</button>
     </view>
   </scroll-page>
 
-  <!-- 加载（应用）支付组件 -->
+  <!-- 统一支付 uni-pay -->
+  <!-- <uni-pay ref="uniPayRef"></uni-pay> -->
+
+  <!-- 支付渠道 -->
   <custom-payment
-    ref="paymentRef"
     @close="onPaymentClose"
     @confirm="onPaymentConfirm"
-    :orderId="orderId"
     :amount="preOrderInfo.actualPayment"
+    :order-id="orderId"
+    ref="paymentRef"
   />
 </template>
 
